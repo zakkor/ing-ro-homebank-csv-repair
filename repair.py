@@ -1,18 +1,20 @@
+#!/usr/bin/env python3
+
 import csv, sys
 
 months_ro_en = {
-  'ianuarie': 'january',
-  'februarie': 'february',
-  'martie': 'march',
-  'aprilie': 'april',
-  'mai': 'may',
-  'iunie': 'june',
-  'iulie': 'july',
-  'august': 'august',
-  'septembrie': 'september',
-  'octombrie': 'october',
-  'noiembrie': 'november',
-  'decembrie': 'december',
+  'ianuarie': '01',
+  'februarie': '02',
+  'martie': '03',
+  'aprilie': '04',
+  'mai': '05',
+  'iunie': '06',
+  'iulie': '07',
+  'august': '08',
+  'septembrie': '09',
+  'octombrie': '10',
+  'noiembrie': '11',
+  'decembrie': '12',
 }
 
 if __name__ == '__main__':
@@ -38,10 +40,12 @@ if __name__ == '__main__':
         # Translate month name from RO to EN
         datewords[1] = months_ro_en[datewords[1]]
         # Create new transaction
-        tx = {'date': ' '.join(datewords), 'details': row[2], 'debit': row[5], 'credit': row[7]}
+        tx = {'date': '-'.join(datewords), 'details': row[2], 'debit': row[5], 'credit': row[7]}
       elif tx is not None:
         # Append more details to the current transaction
         tx.update(details = tx['details']+';'+row[2])
+    # Add final transaction
+    txs.append(tx)
   
   with open(outfilename, 'w', newline='') as csvfile:
     writer = csv.writer(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
