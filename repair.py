@@ -17,18 +17,39 @@ months_ro_en = {
   'decembrie': '12',
 }
 
+column_positions = {
+  's': {
+    'date': 0,
+    'details': 2,
+    'debit': 5,
+    'credit': 7,
+  },
+  't': {
+    'date': 0,
+    'details': 3,
+    'debit': 4,
+    'credit': 6,
+  },
+}
+
 if __name__ == '__main__':
-  if len(sys.argv) < 2:
-    print('you must specify an input .csv file')
+  if len(sys.argv) < 3:
+    print('you must specify a mode: `-t` for transactions or `-s` for statement, and an input .csv file')
     exit(1)
 
-  outfilename = sys.argv[2] if len(sys.argv) >= 3 else sys.argv[1].split('.csv')[0] + '_out.csv'
+  mode = sys.argv[1][1]
+  if mode != 't' and mode != 's':
+    print(mode)
+    print('you must specify a mode: `-t` for transactions or `-s` for statement')
+    exit(1)
+  cols = column_positions[mode]
+  outfilename = sys.argv[3] if len(sys.argv) >= 4 else sys.argv[2].split('.csv')[0] + '_out.csv'
   txs = []
-  with open(sys.argv[1], newline='') as csvfile:
+  with open(sys.argv[2], newline='') as csvfile:
     reader = csv.reader(csvfile, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
     tx = None
     for row in reader:
-      date = row[0]
+      date = row[cols['date']]
       if date != '':
         datewords = date.split(' ')
         if not datewords[0].isnumeric():
@@ -40,10 +61,15 @@ if __name__ == '__main__':
         # Translate month name from RO to EN
         datewords[1] = months_ro_en[datewords[1]]
         # Create new transaction
-        tx = {'date': '-'.join(datewords), 'details': row[2], 'debit': row[5], 'credit': row[7]}
+        tx = {
+          'date': '-'.join(datewords),
+          'details': row[cols['details']],
+          'debit': row[cols['debit']],
+          'credit': row[cols['credit']],
+        }
       elif tx is not None:
         # Append more details to the current transaction
-        tx.update(details = tx['details']+';'+row[2])
+        tx.update(details = tx['details']+';'+row[cols['details']])
     # Add final transaction
     txs.append(tx)
   
