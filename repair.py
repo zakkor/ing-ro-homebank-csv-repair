@@ -83,7 +83,6 @@ if __name__ == '__main__':
       elif mode == 'b':
         if i == 0:
           continue
-        print(row)
         date = datetime.datetime.strptime(row[cols['date']], '%Y%m%d')
         amount = float(row[cols['amount']].replace(',', '.'))
         debit = abs(amount) if amount < 0 else 0
